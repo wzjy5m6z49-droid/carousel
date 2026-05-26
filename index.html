@@ -2,182 +2,342 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>Carousel Test</title>
+<title>Carousel V3 GitHub</title>
 
 <style>
-
 html,
 body{
   margin:0;
   padding:0;
-  background:#0f0f10;
-  font-family:
-    "Segoe UI",
-    sans-serif;
+  background:transparent;
+  font-family:"Segoe UI", sans-serif;
   overflow:hidden;
 }
 
-.wrap{
-  display:flex;
-  gap:24px;
-
-  padding:32px;
-
-  overflow-x:auto;
-  overflow-y:hidden;
-
-  scroll-behavior:smooth;
-
-  scrollbar-width:none;
-}
-
-.wrap::-webkit-scrollbar{
-  display:none;
-}
-
-.card{
-  min-width:320px;
-  max-width:320px;
-
-  background:#1b1b1d;
-
-  border-radius:24px;
-
-  overflow:hidden;
-
-  cursor:pointer;
-
-  transition:
-    transform .35s ease,
-    box-shadow .35s ease;
-
-  box-shadow:
-    0 10px 30px rgba(0,0,0,.35);
-}
-
-.card:hover{
-  transform:translateY(-8px);
-
-  box-shadow:
-    0 20px 40px rgba(0,0,0,.45);
-}
-
-.card img{
+.carouselRoot{
   width:100%;
-  height:190px;
+  opacity:0;
+  transform:translateY(18px) scale(.985);
+  animation:fadeIn .7s ease forwards;
+}
 
-  object-fit:cover;
+@keyframes fadeIn{
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
 
+.carouselContainer{
+  width:100%;
+  aspect-ratio:16 / 9;
+  min-height:220px;
+  position:relative;
+  overflow:hidden;
+  border-radius:16px;
+  background:#111;
+}
+
+.slider{
+  display:flex;
+  height:100%;
+  transition:transform .6s ease;
+}
+
+.slide{
+  min-width:100%;
+  height:100%;
+  position:relative;
+  flex-shrink:0;
+}
+
+.slide img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
   display:block;
+  background:#111;
 }
 
-.content{
-  padding:22px;
+.detailButton{
+  position:absolute;
+  bottom:20px;
+  left:20px;
+  background:rgba(255,255,255,.88);
+  color:#222;
+  padding:8px 14px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:600;
+  text-decoration:none;
+  z-index:10;
+  transition:.25s ease;
 }
 
-.title{
-  font-size:22px;
-  font-weight:700;
+.detailButton:hover{
+  background:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 6px 14px rgba(0,0,0,.25);
+}
 
+.prevButton,
+.nextButton{
+  position:absolute;
+  top:50%;
+  width:72px;
+  height:180px;
+  transform:translateY(-50%);
+  border:0;
+  background:transparent;
   color:#fff;
-
-  margin-bottom:10px;
-
-  line-height:1.4;
+  cursor:pointer;
+  z-index:50;
+  opacity:.82;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  transition:.3s ease;
 }
 
-.desc{
-  font-size:15px;
-
-  color:rgba(255,255,255,.75);
-
-  line-height:1.6;
+.prevButton{
+  left:0;
 }
 
+.nextButton{
+  right:0;
+}
+
+.prevButton::before,
+.nextButton::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  opacity:.8;
+}
+
+.prevButton::before{
+  background:linear-gradient(to right,rgba(0,0,0,.55),rgba(0,0,0,.25),rgba(0,0,0,0));
+}
+
+.nextButton::before{
+  background:linear-gradient(to left,rgba(0,0,0,.55),rgba(0,0,0,.25),rgba(0,0,0,0));
+}
+
+.prevButton:hover,
+.nextButton:hover{
+  opacity:1;
+  transform:translateY(-50%) scale(1.04);
+}
+
+.arrowSvg{
+  width:46px;
+  height:46px;
+  position:relative;
+  z-index:1;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.35));
+}
+
+.dots{
+  position:absolute;
+  bottom:12px;
+  left:0;
+  right:0;
+  text-align:center;
+  z-index:20;
+}
+
+.dotsTrack{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  padding:4px 6px;
+}
+
+.dot{
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.4);
+  cursor:pointer;
+  transition:.25s ease;
+}
+
+.dot.active{
+  width:24px;
+  background:#fff;
+}
+
+.empty{
+  padding:24px;
+  color:#fff;
+  background:#111;
+}
 </style>
 </head>
 
 <body>
 
-<div
-  class="wrap"
-  id="app">
+<div class="carouselRoot">
+  <div class="carouselContainer">
+
+    <div class="slider" id="slider"></div>
+
+    <button class="prevButton" id="prevButton" aria-label="前へ">
+      <svg class="arrowSvg" viewBox="0 0 24 24">
+        <path d="M15 4 L7 12 L15 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <button class="nextButton" id="nextButton" aria-label="次へ">
+      <svg class="arrowSvg" viewBox="0 0 24 24">
+        <path d="M9 4 L17 12 L9 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="dots">
+      <div class="dotsTrack" id="dotsTrack"></div>
+    </div>
+
+  </div>
 </div>
 
-<script src="https://digitalgojp.sharepoint.com/sites/NTA_IBHub12/SiteAssets/carousel/carousel-data.js"></script>
+<script src="https://digitalgojp.sharepoint.com/sites/NTA_IBHub12/SiteAssets/carousel/newsV2Data.js?v=1"></script>
 
 <script>
-
-const app =
-  document.getElementById("app");
-
-const items =
-  window.carouselData || [];
-
-items
-  .sort((a,b) => a.priority - b.priority)
-  .forEach(item => {
-
-    if(item.isActive !== true){
-      return;
-    }
-
-    const card =
-      document.createElement("div");
-
-    card.className = "card";
-
-    card.innerHTML = `
-      <img src="${item.image}">
-
-      <div class="content">
-
-        <div class="title">
-          ${item.title}
-        </div>
-
-        <div class="desc">
-          ${item.description}
-        </div>
-
-      </div>
-    `;
-
-    card.onclick = () => {
-
-      if(item.link){
-        window.open(item.link, "_blank");
-      }
-
-    };
-
-    app.appendChild(card);
-
-  });
-
-
-/* =========================
-   自動スクロール
-========================= */
+const slider = document.getElementById("slider");
+const dotsTrack = document.getElementById("dotsTrack");
 
 let current = 0;
+let timer = null;
 
-setInterval(() => {
+const rawItems = window.newsV2Data || window.carouselData || [];
 
-  current++;
+const today = new Date();
+today.setHours(0,0,0,0);
 
-  if(current >= items.length){
-    current = 0;
+function parseDate(value){
+  if(!value){
+    return null;
   }
 
-  app.scrollTo({
-    left: current * 344,
-    behavior: "smooth"
+  const d = new Date(value);
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+const items = rawItems.filter(item => {
+  if(!item || !item.Image){
+    return false;
+  }
+
+  const start = parseDate(item.StartDate);
+  const end = parseDate(item.EndDate);
+
+  if(start && today < start){
+    return false;
+  }
+
+  if(end && today > end){
+    return false;
+  }
+
+  return true;
+});
+
+function render(){
+  if(!items.length){
+    slider.innerHTML = '<div class="empty">表示対象の画像がありません</div>';
+    return;
+  }
+
+  slider.innerHTML = "";
+  dotsTrack.innerHTML = "";
+
+  items.forEach((item, index) => {
+    const slide = document.createElement("div");
+    slide.className = "slide";
+
+    slide.innerHTML = `
+      <img src="${item.Image}" alt="">
+      ${
+        item.Link
+          ? `<a class="detailButton" href="${item.Link}" target="_blank" rel="noreferrer">詳しく見る</a>`
+          : ""
+      }
+    `;
+
+    slider.appendChild(slide);
+
+    const dot = document.createElement("span");
+    dot.className = "dot" + (index === current ? " active" : "");
+    dot.onclick = () => {
+      current = index;
+      update();
+      restart();
+    };
+
+    dotsTrack.appendChild(dot);
   });
 
-}, 3000);
+  update();
+  restart();
+}
 
+function update(){
+  slider.style.transform = `translateX(-${current * 100}%)`;
+
+  Array.from(dotsTrack.children).forEach((dot, index) => {
+    dot.classList.toggle("active", index === current);
+  });
+}
+
+function next(){
+  current = (current + 1) % items.length;
+  update();
+}
+
+function prev(){
+  current = current === 0 ? items.length - 1 : current - 1;
+  update();
+}
+
+function restart(){
+  if(timer){
+    clearInterval(timer);
+  }
+
+  if(items.length <= 1){
+    return;
+  }
+
+  timer = setInterval(next, 3000);
+}
+
+document.getElementById("nextButton").onclick = () => {
+  next();
+  restart();
+};
+
+document.getElementById("prevButton").onclick = () => {
+  prev();
+  restart();
+};
+
+document.querySelector(".carouselContainer").addEventListener("mouseenter", () => {
+  if(timer){
+    clearInterval(timer);
+  }
+});
+
+document.querySelector(".carouselContainer").addEventListener("mouseleave", () => {
+  restart();
+});
+
+render();
 </script>
 
 </body>
