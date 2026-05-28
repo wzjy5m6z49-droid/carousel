@@ -1,122 +1,13 @@
-<!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8" />
-
-<style>
-html,
-body{
-  margin:0;
-  padding:0;
-  background:#111;
-  overflow:hidden;
-}
-
-.carousel{
-  position:relative;
-  width:100%;
-  aspect-ratio:16 / 9;
-  overflow:hidden;
-  background:#111;
-  border-radius:16px;
-}
-
-.slider{
-  display:flex;
-  height:100%;
-  transition:transform .6s ease;
-}
-
-.slide{
-  min-width:100%;
-  height:100%;
-}
-
-.slide img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  display:block;
-  background:#111;
-}
-
-.arrow{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  width:64px;
-  height:140px;
-  border:0;
-  background:rgba(0,0,0,.25);
-  color:#fff;
-  font-size:44px;
-  cursor:pointer;
-  z-index:10;
-}
-
-.prev{
-  left:0;
-}
-
-.next{
-  right:0;
-}
-
-.dots{
-  position:absolute;
-  bottom:12px;
-  left:0;
-  right:0;
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  z-index:20;
-}
-
-.dot{
-  width:10px;
-  height:10px;
-  border-radius:999px;
-  background:rgba(255,255,255,.45);
-  cursor:pointer;
-  transition:.25s;
-}
-
-.dot.active{
-  width:24px;
-  background:#fff;
-}
-
-.empty{
-  color:#fff;
-  padding:20px;
-  font-family:sans-serif;
-}
-</style>
-</head>
-
-<body>
-
-<div class="carousel" id="carousel">
-  <div class="slider" id="slider"></div>
-
-  <button class="arrow prev" id="prev">‹</button>
-  <button class="arrow next" id="next">›</button>
-
-  <div class="dots" id="dots"></div>
-</div>
-
-<script src="https://digitalgojp.sharepoint.com/sites/NTA_IBHub12/SiteAssets/carousel/carousel-data.js?v=999"></script>
-
-<script>
 const slider = document.getElementById("slider");
 const dots = document.getElementById("dots");
 const carousel = document.getElementById("carousel");
 
-const items = window.carouselData || [];
+const rawItems = window.carouselData || [];
 
 let current = 0;
 let timer = null;
+
+const items = rawItems.filter(item => item && item.Image);
 
 if(!items.length){
   slider.innerHTML = '<div class="empty">表示対象の画像がありません</div>';
@@ -140,6 +31,7 @@ items.forEach((item, index) => {
 
   const dot = document.createElement("span");
   dot.className = "dot" + (index === 0 ? " active" : "");
+
   dot.onclick = () => {
     current = index;
     update();
@@ -150,10 +42,34 @@ items.forEach((item, index) => {
 });
 
 function update(){
-  slider.style.transform = `translateX(-${current * 100}%)`;
+  slider.style.transform =
+    `translateX(calc(10% - ${current * 100}%))`;
 
   Array.from(dots.children).forEach((dot, index) => {
     dot.classList.toggle("active", index === current);
+  });
+
+  Array.from(slider.children).forEach((slide, index) => {
+    const img = slide.querySelector("img");
+
+    if(index === current){
+      slide.style.transform = "scale(1)";
+      slide.style.opacity = "1";
+      slide.style.filter = "blur(0px)";
+
+      if(img){
+        img.style.transform = "scale(1.02)";
+      }
+    }
+    else{
+      slide.style.transform = "scale(.86)";
+      slide.style.opacity = ".45";
+      slide.style.filter = "blur(1px)";
+
+      if(img){
+        img.style.transform = "scale(.96)";
+      }
+    }
   });
 }
 
@@ -201,8 +117,5 @@ carousel.addEventListener("mouseleave", () => {
   restart();
 });
 
+update();
 restart();
-</script>
-
-</body>
-</html>
