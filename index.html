@@ -3,18 +3,20 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="./style.css" />
+<link rel="stylesheet" href="./style.css?v=1" />
 </head>
 
 <body>
 
-<div class="carousel" id="carousel">
-  <div class="slider" id="slider"></div>
+<div class="carouselRoot">
+  <div class="carousel" id="carousel">
+    <div class="slider" id="slider"></div>
 
-  <button class="arrow prev" id="prev">‹</button>
-  <button class="arrow next" id="next">›</button>
+    <button class="arrow prev" id="prev" aria-label="前へ">‹</button>
+    <button class="arrow next" id="next" aria-label="次へ">›</button>
 
-  <div class="dots" id="dots"></div>
+    <div class="dots" id="dots"></div>
+  </div>
 </div>
 
 <script src="https://digitalgojp.sharepoint.com/sites/NTA_IBHub12/SiteAssets/carousel/carousel-data.js?v=999"></script>
