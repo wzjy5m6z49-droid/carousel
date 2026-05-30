@@ -9,6 +9,8 @@ const rawItems = window.carouselData || [];
 let current = 0;
 let timer = null;
 
+const now = new Date();
+
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
@@ -19,14 +21,79 @@ function parseDate(value){
 
   const d = new Date(value);
   d.setHours(0, 0, 0, 0);
+
   return d;
 }
 
-const items = rawItems.filter(item => {
-  if(!item || !item.Image){
+function getTodayKey(){
+  return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][now.getDay()];
+}
+
+function getDisplayDays(item){
+  if(!item.DisplayDays){
+    return [];
+  }
+
+  if(!Array.isArray(item.DisplayDays)){
+    return [];
+  }
+
+  return item.DisplayDays
+    .map(day => day && day.Value)
+    .filter(Boolean);
+}
+
+function normalizeTime(value){
+  if(!value){
+    return "";
+  }
+
+  const parts = String(value).split(":");
+
+  if(parts.length < 2){
+    return "";
+  }
+
+  const hour = String(parts[0]).padStart(2, "0");
+  const minute = String(parts[1]).padStart(2, "0");
+
+  return `${hour}:${minute}`;
+}
+
+function isAllowedTime(item){
+  const start = normalizeTime(item.ShowStartTime);
+  const end = normalizeTime(item.ShowEndTime);
+
+  if(!start && !end){
+    return true;
+  }
+
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  const currentTime = `${hh}:${mm}`;
+
+  if(start && currentTime < start){
     return false;
   }
 
+  if(end && currentTime > end){
+    return false;
+  }
+
+  return true;
+}
+
+function isAllowedDay(item){
+  const days = getDisplayDays(item);
+
+  if(!days.length){
+    return true;
+  }
+
+  return days.indexOf(getTodayKey()) !== -1;
+}
+
+function isAllowedDate(item){
   const start = parseDate(item.StartDate);
   const end = parseDate(item.EndDate);
 
@@ -39,7 +106,34 @@ const items = rawItems.filter(item => {
   }
 
   return true;
-});
+}
+
+const items = rawItems
+  .filter(item => {
+    if(!item || !item.Image){
+      return false;
+    }
+
+    if(!isAllowedDate(item)){
+      return false;
+    }
+
+    if(!isAllowedDay(item)){
+      return false;
+    }
+
+    if(!isAllowedTime(item)){
+      return false;
+    }
+
+    return true;
+  })
+  .sort((a, b) => {
+    const orderA = a.DisplayOrder || 9999;
+    const orderB = b.DisplayOrder || 9999;
+
+    return orderA - orderB;
+  });
 
 function render(){
   if(!items.length){
