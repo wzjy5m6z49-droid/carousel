@@ -21,6 +21,15 @@ const SHOW_DETAIL_BUTTON =
 const DOT_POSITION =
   config.dotPosition || "overlay";
 
+const BUTTON_BACKGROUND_COLOR =
+  config.buttonBackgroundColor || "#ffffff";
+
+const BUTTON_TEXT_COLOR =
+  config.buttonTextColor || "#333333";
+
+const ARROW_POSITION =
+  config.arrowPosition || "inside";
+
 const slider = document.getElementById("slider");
 const dots = document.getElementById("dots");
 const carousel = document.getElementById("carousel");
@@ -130,6 +139,10 @@ if(DOT_POSITION === "below"){
   carousel.classList.add("dotsBelow");
 }
 
+if(ARROW_POSITION === "outside"){
+  carousel.classList.add("arrowsOutside");
+}
+
 prevButton.style.color = ARROW_COLOR;
 nextButton.style.color = ARROW_COLOR;
 
@@ -153,6 +166,15 @@ document.documentElement.style.setProperty(
   SHADOW_STRENGTH
 );
 
+document.documentElement.style.setProperty(
+  "--button-bg",
+  BUTTON_BACKGROUND_COLOR
+);
+
+document.documentElement.style.setProperty(
+  "--button-color",
+  BUTTON_TEXT_COLOR
+);
 
 const now = new Date();
 
