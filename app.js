@@ -176,11 +176,11 @@ function render(){
 
     slide.innerHTML = `
       <img src="${item.Image}" alt="">
-      ${
-        item.Link
-          ? `<a class="detailButton" href="${item.Link}" target="_blank" rel="noreferrer">詳しく見る</a>`
-          : ""
-      }
+     ${
+  item.Link
+    ? `<a class="detailButton" href="${item.Link}">詳しく見る</a>`
+    : ""
+}
     `;
 
     slider.appendChild(slide);
