@@ -1,3 +1,5 @@
+const config = window.carouselConfig || {};
+
 const ARROW_COLOR =
   config.arrowColor || "#ffffff";
 
@@ -18,7 +20,6 @@ const SHOW_DETAIL_BUTTON =
 
 const DOT_POSITION =
   config.dotPosition || "overlay";
-const config = window.carouselConfig || {};
 
 const slider = document.getElementById("slider");
 const dots = document.getElementById("dots");
