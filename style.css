@@ -204,7 +204,7 @@ body{
   height:10px;
   border-radius:999px;
   border:none;
-  background:rgba(255,255,255,.38);
+  background:var(--dot-color,#94a3b8);
   cursor:pointer;
   opacity:.82;
   overflow:hidden;
@@ -250,7 +250,7 @@ body{
   width:0%;
   height:100%;
   border-radius:inherit;
-  background:#fff;
+  background:var(--dot-active-color,#ffffff);
 }
 
 .dot.active .progressFill{
