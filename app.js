@@ -1,4 +1,5 @@
 const config = window.carouselConfig || {};
+
 const slider = document.getElementById("slider");
 const dots = document.getElementById("dots");
 const carousel = document.getElementById("carousel");
@@ -6,80 +7,189 @@ const prevButton = document.getElementById("prev");
 const nextButton = document.getElementById("next");
 
 const rawItems = window.carouselData || [];
-const holidays = (window.holidayData || []).map(x => x.HolidayDate).filter(Boolean);
+const holidays = (window.holidayData || [])
+  .map(x => x.HolidayDate)
+  .filter(Boolean);
 
 const SLIDE_INTERVAL =
   Number(config.slideInterval || 3000);
 
+const TRANSITION_DURATION =
+  Number(config.transitionDuration || 650);
+
 const CAROUSEL_LAYOUT =
-  config.carouselLayout || "normal"; // "normal" or "peek"
+  config.carouselLayout || "normal";
+
+const AUTO_PLAY =
+  config.autoPlay !== false;
+
+const PAUSE_ON_HOVER =
+  config.pauseOnHover !== false;
+
+const SHOW_DOTS =
+  config.showDots !== false;
+
+const SHOW_ARROWS =
+  config.showArrows !== false;
+
+const IMAGE_FIT =
+  config.imageFit || "contain";
+
+const MAX_WIDTH =
+  Number(config.maxWidth || 980);
+
+const BORDER_RADIUS =
+  Number(config.borderRadius || 18);
+
+const DETAIL_BUTTON_TEXT =
+  config.detailButtonText || "詳しく見る";
+
 
 let current = 0;
 let timer = null;
 
-carousel.classList.add(CAROUSEL_LAYOUT === "peek" ? "layoutPeek" : "layoutNormal");
+carousel.classList.add(
+  CAROUSEL_LAYOUT === "peek"
+    ? "layoutPeek"
+    : "layoutNormal"
+);
+
+carousel.style.maxWidth =
+  `${MAX_WIDTH}px`;
+
+carousel.style.borderRadius =
+  `${BORDER_RADIUS}px`;
+
+slider.style.transition =
+  `transform ${TRANSITION_DURATION}ms cubic-bezier(.22,.8,.2,1)`;
+
 
 prevButton.innerHTML = `
-<svg class="arrowSvg" viewBox="0 0 24 24" aria-hidden="true">
-  <path d="M15 4 L7 12 L15 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+  <svg class="arrowSvg" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M15 4 L7 12 L15 20"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
 `;
 
 nextButton.innerHTML = `
-<svg class="arrowSvg" viewBox="0 0 24 24" aria-hidden="true">
-  <path d="M9 4 L17 12 L9 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+  <svg class="arrowSvg" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M9 4 L17 12 L9 20"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
 `;
+
+
+if(!SHOW_ARROWS){
+  prevButton.style.display = "none";
+  nextButton.style.display = "none";
+}
+
+if(!SHOW_DOTS){
+  dots.style.display = "none";
+}
+
 
 const now = new Date();
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
+
 function formatDateKey(date){
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
   const d = String(date.getDate()).padStart(2, "0");
+
   return `${y}-${m}-${d}`;
 }
 
-const todayKey = formatDateKey(today);
-const isHolidayToday = holidays.includes(todayKey);
+
+const todayKey =
+  formatDateKey(today);
+
+const isHolidayToday =
+  holidays.includes(todayKey);
+
 
 function parseDate(value){
-  if(!value) return null;
+  if(!value){
+    return null;
+  }
+
   const d = new Date(value);
   d.setHours(0, 0, 0, 0);
+
   return d;
 }
+
 
 function getTodayKey(){
   return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][now.getDay()];
 }
 
+
 function getDisplayDays(item){
-  if(!Array.isArray(item.DisplayDays)) return [];
-  return item.DisplayDays.map(day => day && day.Value).filter(Boolean);
+  if(!Array.isArray(item.DisplayDays)){
+    return [];
+  }
+
+  return item.DisplayDays
+    .map(day => day && day.Value)
+    .filter(Boolean);
 }
 
+
 function normalizeTime(value){
-  if(!value) return "";
+  if(!value){
+    return "";
+  }
+
   const parts = String(value).split(":");
-  if(parts.length < 2) return "";
+
+  if(parts.length < 2){
+    return "";
+  }
+
   return `${String(parts[0]).padStart(2, "0")}:${String(parts[1]).padStart(2, "0")}`;
 }
 
+
 function isSameDate(a, b){
-  return a.getFullYear() === b.getFullYear()
-    && a.getMonth() === b.getMonth()
-    && a.getDate() === b.getDate();
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
 }
 
-function getMonthlyDisplayDate(item){
-  const baseDay = Number(item.BaseDay || 0);
-  if(!baseDay) return null;
 
-  const target = new Date(now.getFullYear(), now.getMonth(), baseDay);
+function getMonthlyDisplayDate(item){
+  const baseDay =
+    Number(item.BaseDay || 0);
+
+  if(!baseDay){
+    return null;
+  }
+
+  const target =
+    new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      baseDay
+    );
+
   target.setHours(0, 0, 0, 0);
 
   if(item.ShiftToFriday === true){
@@ -95,79 +205,162 @@ function getMonthlyDisplayDate(item){
   return target;
 }
 
+
 function isAllowedBaseDay(item){
-  if(!item.BaseDay) return true;
-  const displayDate = getMonthlyDisplayDate(item);
-  if(!displayDate) return true;
+  if(!item.BaseDay){
+    return true;
+  }
+
+  const displayDate =
+    getMonthlyDisplayDate(item);
+
+  if(!displayDate){
+    return true;
+  }
+
   return isSameDate(today, displayDate);
 }
 
+
 function isAllowedHoliday(item){
-  if(item.HolidayMode === "holiday") return isHolidayToday;
-  if(item.HolidayMode === "nonHoliday") return !isHolidayToday;
+  if(item.HolidayMode === "holiday"){
+    return isHolidayToday;
+  }
+
+  if(item.HolidayMode === "nonHoliday"){
+    return !isHolidayToday;
+  }
+
   return true;
 }
 
-function isAllowedTime(item){
-  const start = normalizeTime(item.ShowStartTime);
-  const end = normalizeTime(item.ShowEndTime);
 
-  if(!start && !end) return true;
+function isAllowedTime(item){
+  const start =
+    normalizeTime(item.ShowStartTime);
+
+  const end =
+    normalizeTime(item.ShowEndTime);
+
+  if(!start && !end){
+    return true;
+  }
 
   const currentTime =
     `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
-  if(start && currentTime < start) return false;
-  if(end && currentTime > end) return false;
+  if(start && currentTime < start){
+    return false;
+  }
+
+  if(end && currentTime > end){
+    return false;
+  }
 
   return true;
 }
 
+
 function isAllowedDay(item){
-  const days = getDisplayDays(item);
-  if(!days.length) return true;
+  const days =
+    getDisplayDays(item);
+
+  if(!days.length){
+    return true;
+  }
+
   return days.includes(getTodayKey());
 }
 
-function isAllowedDate(item){
-  const start = parseDate(item.StartDate);
-  const end = parseDate(item.EndDate);
 
-  if(start && today < start) return false;
-  if(end && today > end) return false;
+function isAllowedDate(item){
+  const start =
+    parseDate(item.StartDate);
+
+  const end =
+    parseDate(item.EndDate);
+
+  if(start && today < start){
+    return false;
+  }
+
+  if(end && today > end){
+    return false;
+  }
 
   return true;
 }
 
+
 const items = rawItems
   .filter(item => {
-    if(!item || !item.Image) return false;
-    if(!isAllowedDate(item)) return false;
-    if(!isAllowedBaseDay(item)) return false;
-    if(!isAllowedHoliday(item)) return false;
-    if(!isAllowedDay(item)) return false;
-    if(!isAllowedTime(item)) return false;
+    if(!item || !item.Image){
+      return false;
+    }
+
+    if(!isAllowedDate(item)){
+      return false;
+    }
+
+    if(!isAllowedBaseDay(item)){
+      return false;
+    }
+
+    if(!isAllowedHoliday(item)){
+      return false;
+    }
+
+    if(!isAllowedDay(item)){
+      return false;
+    }
+
+    if(!isAllowedTime(item)){
+      return false;
+    }
+
     return true;
   })
   .sort((a, b) => {
-    const aTime = !!(a.ShowStartTime || a.ShowEndTime);
-    const bTime = !!(b.ShowStartTime || b.ShowEndTime);
+    const aTime =
+      !!(a.ShowStartTime || a.ShowEndTime);
 
-    if(aTime && !bTime) return -1;
-    if(!aTime && bTime) return 1;
+    const bTime =
+      !!(b.ShowStartTime || b.ShowEndTime);
 
-    const aBase = !!a.BaseDay;
-    const bBase = !!b.BaseDay;
+    if(aTime && !bTime){
+      return -1;
+    }
 
-    if(aBase && !bBase) return -1;
-    if(!aBase && bBase) return 1;
+    if(!aTime && bTime){
+      return 1;
+    }
 
-    return Number(a.DisplayOrder || 9999) - Number(b.DisplayOrder || 9999);
+    const aBase =
+      !!a.BaseDay;
+
+    const bBase =
+      !!b.BaseDay;
+
+    if(aBase && !bBase){
+      return -1;
+    }
+
+    if(!aBase && bBase){
+      return 1;
+    }
+
+    return (
+      Number(a.DisplayOrder || 9999) -
+      Number(b.DisplayOrder || 9999)
+    );
   });
+
 
 function render(){
   if(!items.length){
-    slider.innerHTML = '<div class="empty">表示対象の画像がありません</div>';
+    slider.innerHTML =
+      '<div class="empty">表示対象の画像がありません</div>';
+
     return;
   }
 
@@ -175,27 +368,35 @@ function render(){
   dots.innerHTML = "";
 
   items.forEach((item, index) => {
-    const slide = document.createElement("div");
+    const slide =
+      document.createElement("div");
+
     slide.className = "slide";
 
     slide.innerHTML = `
-      <img src="${item.Image}" alt="">
-     ${
-  item.Link
-    ? `<a class="detailButton" href="${item.Link}" target="_top">詳しく見る</a>`
-    : ""
-}
+      <img
+        src="${item.Image}"
+        alt=""
+        style="object-fit:${IMAGE_FIT};"
+      >
+
+      ${
+        item.Link
+          ? `<a class="detailButton" href="${item.Link}" target="_top">${DETAIL_BUTTON_TEXT}</a>`
+          : ""
+      }
     `;
 
     slider.appendChild(slide);
 
-    const dot = document.createElement("span");
+    const dot =
+      document.createElement("span");
 
-dot.className =
-  "dot" + (index === current ? " active" : "");
+    dot.className =
+      "dot" + (index === current ? " active" : "");
 
-dot.innerHTML =
-  '<span class="progressFill"></span>';
+    dot.innerHTML =
+      '<span class="progressFill"></span>';
 
     dot.onclick = () => {
       current = index;
@@ -210,80 +411,134 @@ dot.innerHTML =
   restart();
 }
 
+
 function update(){
   if(CAROUSEL_LAYOUT === "peek"){
-    slider.style.transform = `translateX(calc(10% - ${current * 100}%))`;
-  }else{
-    slider.style.transform = `translateX(-${current * 100}%)`;
+    slider.style.transform =
+      `translateX(calc(10% - ${current * 100}%))`;
+  }
+  else{
+    slider.style.transform =
+      `translateX(-${current * 100}%)`;
   }
 
-  Array.from(dots.children).forEach((dot, index) => {
-    dot.classList.remove("active");
+  Array
+    .from(dots.children)
+    .forEach((dot, index) => {
+      dot.classList.remove("active");
 
-    if(index === current){
-      void dot.offsetWidth;
-      dot.classList.add("active");
-    }
-  });
+      if(index === current){
+        void dot.offsetWidth;
+        dot.classList.add("active");
+      }
+    });
 
-  Array.from(slider.children).forEach((slide, index) => {
-    if(CAROUSEL_LAYOUT !== "peek") return;
+  Array
+    .from(slider.children)
+    .forEach((slide, index) => {
+      if(CAROUSEL_LAYOUT !== "peek"){
+        return;
+      }
 
-    if(index === current){
-      slide.classList.add("activeSlide");
-    }else{
-      slide.classList.remove("activeSlide");
-    }
-  });
+      if(index === current){
+        slide.classList.add("activeSlide");
+      }
+      else{
+        slide.classList.remove("activeSlide");
+      }
+    });
 }
+
 
 function next(){
-  if(!items.length) return;
-  current = (current + 1) % items.length;
+  if(!items.length){
+    return;
+  }
+
+  current =
+    (current + 1) % items.length;
+
   update();
 }
+
 
 function prev(){
-  if(!items.length) return;
-  current = current === 0 ? items.length - 1 : current - 1;
+  if(!items.length){
+    return;
+  }
+
+  current =
+    current === 0
+      ? items.length - 1
+      : current - 1;
+
   update();
 }
 
+
 function restart(){
-  if(timer) clearInterval(timer);
+  if(timer){
+    clearInterval(timer);
+  }
 
-  Array.from(dots.children).forEach((dot, index) => {
-    dot.classList.remove("active");
+  Array
+    .from(dots.children)
+    .forEach((dot, index) => {
+      dot.classList.remove("active");
 
-    if(index === current){
-      void dot.offsetWidth;
-      dot.classList.add("active");
-    }
-  });
+      if(index === current){
+        void dot.offsetWidth;
+        dot.classList.add("active");
+      }
+    });
 
-  if(items.length <= 1) return;
+  if(!AUTO_PLAY){
+    return;
+  }
 
-  timer = setInterval(next, SLIDE_INTERVAL);
+  if(items.length <= 1){
+    return;
+  }
+
+  timer =
+    setInterval(next, SLIDE_INTERVAL);
 }
+
 
 nextButton.onclick = () => {
   next();
   restart();
 };
 
+
 prevButton.onclick = () => {
   prev();
   restart();
 };
 
+
 carousel.addEventListener("mouseenter", () => {
+  if(!PAUSE_ON_HOVER){
+    return;
+  }
+
   carousel.classList.add("paused");
-  if(timer) clearInterval(timer);
+
+  if(timer){
+    clearInterval(timer);
+  }
 });
 
+
 carousel.addEventListener("mouseleave", () => {
+  if(!PAUSE_ON_HOVER){
+    return;
+  }
+
   carousel.classList.remove("paused");
+
   restart();
 });
+
 
 render();
