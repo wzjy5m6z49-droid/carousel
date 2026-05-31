@@ -126,6 +126,10 @@ if(!SHOW_DOTS){
   dots.style.display = "none";
 }
 
+if(DOT_POSITION === "below"){
+  carousel.classList.add("dotsBelow");
+}
+
 prevButton.style.color = ARROW_COLOR;
 nextButton.style.color = ARROW_COLOR;
 
