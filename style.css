@@ -10,7 +10,6 @@ body{
 .carouselRoot{
   padding:16px;
   box-sizing:border-box;
-
   opacity:0;
   transform:translateY(18px) scale(.985);
   animation:fadeUp .7s cubic-bezier(.22,.8,.2,1) forwards;
@@ -23,6 +22,13 @@ body{
   }
 }
 
+.carouselShell{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+}
+
 .carousel{
   position:relative;
   width:min(100%, 980px);
@@ -33,7 +39,7 @@ body{
   background:#111;
   border-radius:18px;
   box-shadow:
-    0 18px calc(var(--shadow-strength, 28) * 1.6px)
+    0 18px calc(var(--shadow-strength,28) * 1.6px)
     rgba(0,0,0,.28);
 }
 
@@ -60,7 +66,7 @@ body{
   background:#111;
   border-radius:14px;
   box-shadow:
-    0 18px calc(var(--shadow-strength, 28) * 1.4px)
+    0 18px calc(var(--shadow-strength,28) * 1.4px)
     rgba(0,0,0,.28);
   transition:
     transform .45s ease,
@@ -70,7 +76,7 @@ body{
 .slide:hover img{
   transform:scale(1.012);
   box-shadow:
-    0 24px calc(var(--shadow-strength, 28) * 1.8px)
+    0 24px calc(var(--shadow-strength,28) * 1.8px)
     rgba(0,0,0,.38);
 }
 
@@ -79,41 +85,27 @@ body{
   bottom:20px;
   left:20px;
   z-index:20;
-
   background:var(--button-bg,#ffffff);
   color:var(--button-color,#333333);
-
   padding:8px 14px;
-
   border-radius:6px;
-
   font-size:14px;
   font-weight:600;
-
   text-decoration:none;
-
   border:none;
-
   cursor:pointer;
-
   transition:all .25s ease;
-
   backdrop-filter:blur(var(--glass-strength,16px));
   -webkit-backdrop-filter:blur(var(--glass-strength,16px));
 }
 
 .detailButton:hover{
   background:#fff;
-
   transform:translateY(-2px);
-
-  box-shadow:
-    0 6px 14px rgba(0,0,0,.25);
+  box-shadow:0 6px 14px rgba(0,0,0,.25);
 }
+
 .arrow{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
   width:72px;
   height:180px;
   border:0;
@@ -121,38 +113,24 @@ body{
   font-size:58px;
   cursor:pointer;
   z-index:50;
-  opacity:0;
+  opacity:.82;
   display:flex;
   align-items:center;
   justify-content:center;
+  flex-shrink:0;
   overflow:hidden;
-
   background:rgba(255,255,255,.04);
-
   backdrop-filter:blur(var(--glass-strength,16px));
   -webkit-backdrop-filter:blur(var(--glass-strength,16px));
-
   transition:
     opacity .35s ease,
     transform .35s ease,
     width .25s ease;
 }
 
-.carousel:hover .arrow{
-  opacity:.82;
-}
-
 .arrow:hover{
   opacity:1;
-  transform:translateY(-50%) scale(1.04);
-}
-
-.prev{
-  left:0;
-}
-
-.next{
-  right:0;
+  transform:scale(1.04);
 }
 
 .arrow::before{
@@ -191,6 +169,12 @@ body{
   width:160px;
 }
 
+.dotsWrap{
+  display:flex;
+  justify-content:center;
+  margin-top:16px;
+}
+
 .dots{
   position:static;
   display:flex;
@@ -199,17 +183,13 @@ body{
   gap:8px;
   padding:8px 14px;
   background:rgba(255,255,255,.08);
-
   backdrop-filter:blur(var(--glass-strength,16px));
   -webkit-backdrop-filter:blur(var(--glass-strength,16px));
-
   border:1px solid rgba(255,255,255,.14);
   border-radius:999px;
-
   box-shadow:
     0 8px calc(var(--shadow-strength,28) * 1px)
     rgba(0,0,0,.2);
-
   width:max-content;
 }
 
@@ -223,7 +203,6 @@ body{
   cursor:pointer;
   opacity:.82;
   overflow:hidden;
-
   transition:
     width .28s ease,
     transform .25s ease,
@@ -231,8 +210,6 @@ body{
     opacity .25s ease,
     box-shadow .25s ease;
 }
-
-
 
 .dot:hover{
   transform:scale(1.12);
@@ -247,18 +224,6 @@ body{
   box-shadow:0 0 12px rgba(255,255,255,.38);
 }
 
-.empty{
-  width:100%;
-  min-width:100%;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  font-size:16px;
-  font-family:sans-serif;
-}
-
 .progressFill{
   position:absolute;
   inset:0 auto 0 0;
@@ -269,7 +234,7 @@ body{
 }
 
 .dot.active .progressFill{
-  animation:dotProgress var(--slide-interval, 3000ms) linear forwards;
+  animation:dotProgress var(--slide-interval,3000ms) linear forwards;
 }
 
 .carousel.paused .dot.active .progressFill{
@@ -277,17 +242,18 @@ body{
 }
 
 @keyframes dotProgress{
-  from{
-    width:0%;
-  }
-
-  to{
-    width:100%;
-  }
+  from{ width:0%; }
+  to{ width:100%; }
 }
 
-.dotsWrap{
+.empty{
+  width:100%;
+  min-width:100%;
+  height:100%;
   display:flex;
+  align-items:center;
   justify-content:center;
-  margin-top:16px;
+  color:#fff;
+  font-size:16px;
+  font-family:sans-serif;
 }
