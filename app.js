@@ -60,6 +60,50 @@ function normalizeTime(value){
   return `${hour}:${minute}`;
 }
 
+function isSameDate(a, b){
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
+function getMonthlyDisplayDate(item){
+  const baseDay = Number(item.BaseDay || 0);
+
+  if(!baseDay){
+    return null;
+  }
+
+  const year = now.getFullYear();
+  const month = now.getMonth();
+
+  const target = new Date(year, month, baseDay);
+  target.setHours(0, 0, 0, 0);
+
+  if(item.ShiftToFriday === true){
+    while(target.getDay() === 0 || target.getDay() === 6){
+      target.setDate(target.getDate() - 1);
+    }
+  }
+
+  return target;
+}
+
+function isAllowedBaseDay(item){
+  if(!item.BaseDay){
+    return true;
+  }
+
+  const displayDate = getMonthlyDisplayDate(item);
+
+  if(!displayDate){
+    return true;
+  }
+
+  return isSameDate(today, displayDate);
+}
+
 function isAllowedTime(item){
   const start = normalizeTime(item.ShowStartTime);
   const end = normalizeTime(item.ShowEndTime);
@@ -118,6 +162,10 @@ const items = rawItems
       return false;
     }
 
+    if(!isAllowedBaseDay(item)){
+      return false;
+    }
+
     if(!isAllowedDay(item)){
       return false;
     }
@@ -129,8 +177,30 @@ const items = rawItems
     return true;
   })
   .sort((a, b) => {
-    const orderA = a.DisplayOrder || 9999;
-    const orderB = b.DisplayOrder || 9999;
+    const aTime = !!(a.ShowStartTime || a.ShowEndTime);
+    const bTime = !!(b.ShowStartTime || b.ShowEndTime);
+
+    if(aTime && !bTime){
+      return -1;
+    }
+
+    if(!aTime && bTime){
+      return 1;
+    }
+
+    const aBase = !!a.BaseDay;
+    const bBase = !!b.BaseDay;
+
+    if(aBase && !bBase){
+      return -1;
+    }
+
+    if(!aBase && bBase){
+      return 1;
+    }
+
+    const orderA = Number(a.DisplayOrder || 9999);
+    const orderB = Number(b.DisplayOrder || 9999);
 
     return orderA - orderB;
   });
