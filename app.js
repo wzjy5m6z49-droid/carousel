@@ -1,3 +1,4 @@
+const config = window.carouselConfig || {};
 const slider = document.getElementById("slider");
 const dots = document.getElementById("dots");
 const carousel = document.getElementById("carousel");
@@ -7,8 +8,11 @@ const nextButton = document.getElementById("next");
 const rawItems = window.carouselData || [];
 const holidays = (window.holidayData || []).map(x => x.HolidayDate).filter(Boolean);
 
-const SLIDE_INTERVAL = 3000;
-const CAROUSEL_LAYOUT = "normal"; // "normal" or "peek"
+const SLIDE_INTERVAL =
+  Number(config.slideInterval || 3000);
+
+const CAROUSEL_LAYOUT =
+  config.carouselLayout || "normal"; // "normal" or "peek"
 
 let current = 0;
 let timer = null;
