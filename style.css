@@ -271,17 +271,8 @@ body{
   }
 }
 
-.carousel.dotsBelow{
-  overflow:visible;
-}
-
-.carousel.dotsBelow .dots{
-  position:static;
-  transform:none;
-
+.dotsWrap{
+  display:flex;
+  justify-content:center;
   margin-top:16px;
-  margin-left:auto;
-  margin-right:auto;
-
-  width:max-content;
 }
