@@ -126,6 +126,29 @@ if(!SHOW_DOTS){
   dots.style.display = "none";
 }
 
+prevButton.style.color = ARROW_COLOR;
+nextButton.style.color = ARROW_COLOR;
+
+document.documentElement.style.setProperty(
+  "--dot-color",
+  DOT_COLOR
+);
+
+document.documentElement.style.setProperty(
+  "--dot-active-color",
+  DOT_ACTIVE_COLOR
+);
+
+document.documentElement.style.setProperty(
+  "--glass-strength",
+  `${GLASS_STRENGTH}px`
+);
+
+document.documentElement.style.setProperty(
+  "--shadow-strength",
+  SHADOW_STRENGTH
+);
+
 
 const now = new Date();
 
@@ -406,11 +429,11 @@ function render(){
         style="object-fit:${IMAGE_FIT};"
       >
 
-      ${
-        item.Link
-          ? `<a class="detailButton" href="${item.Link}" target="_top">${DETAIL_BUTTON_TEXT}</a>`
-          : ""
-      }
+     ${
+  item.Link && SHOW_DETAIL_BUTTON
+    ? `<a class="detailButton" href="${item.Link}" target="_top">${DETAIL_BUTTON_TEXT}</a>`
+    : ""
+}
     `;
 
     slider.appendChild(slide);
