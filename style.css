@@ -73,26 +73,34 @@ body{
   bottom:20px;
   left:20px;
   z-index:20;
-  background:rgba(255,255,255,.82);
-  color:#222;
-  padding:9px 15px;
-  border-radius:999px;
+
+  background:rgba(255,255,255,.85);
+  color:#333;
+
+  padding:8px 14px;
+
+  border-radius:6px;
+
   font-size:14px;
-  font-weight:700;
+  font-weight:600;
+
   text-decoration:none;
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.25);
-  box-shadow:0 8px 22px rgba(0,0,0,.22);
-  transition:.25s ease;
+
+  border:none;
+
+  cursor:pointer;
+
+  transition:all .25s ease;
 }
 
 .detailButton:hover{
   background:#fff;
-  transform:translateY(-2px);
-  box-shadow:0 10px 26px rgba(0,0,0,.28);
-}
 
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 6px 14px rgba(0,0,0,.25);
+}
 .arrow{
   position:absolute;
   top:50%;
