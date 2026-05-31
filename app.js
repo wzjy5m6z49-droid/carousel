@@ -178,7 +178,7 @@ function render(){
       <img src="${item.Image}" alt="">
      ${
   item.Link
-    ? `<a class="detailButton" href="${item.Link}">詳しく見る</a>`
+    ? `<a class="detailButton" href="${item.Link}" target="_top">詳しく見る</a>`
     : ""
 }
     `;
