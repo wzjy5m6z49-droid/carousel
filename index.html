@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="./style.css?v=1" />
 </head>
 
 <body>
@@ -19,8 +18,15 @@
   </div>
 </div>
 
-<script src="https://digitalgojp.sharepoint.com/sites/NTA_IBHub12/SiteAssets/carousel/carousel-data.js?v=999"></script>
-<script src="./app.js?v=1"></script>
+<script>
+const v = new Date().getTime();
+
+document.write('<link rel="stylesheet" href="./style.css?v=' + v + '">');
+
+document.write('<script src="https://digitalgojp.sharepoint.com/sites/NTA_IBHub12/SiteAssets/carousel/carousel-data.js?v=' + v + '"><\/script>');
+
+document.write('<script src="./app.js?v=' + v + '"><\/script>');
+</script>
 
 </body>
 </html>
