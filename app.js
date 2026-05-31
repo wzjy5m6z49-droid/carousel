@@ -60,6 +60,11 @@ carousel.style.maxWidth =
 carousel.style.borderRadius =
   `${BORDER_RADIUS}px`;
 
+carousel.style.setProperty(
+  "--slide-interval",
+  `${SLIDE_INTERVAL}ms`
+);
+
 slider.style.transition =
   `transform ${TRANSITION_DURATION}ms cubic-bezier(.22,.8,.2,1)`;
 
