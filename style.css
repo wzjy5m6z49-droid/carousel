@@ -254,7 +254,7 @@ body{
 }
 
 .dot.active .progressFill{
-  animation:dotProgress 3000ms linear forwards;
+  animation:dotProgress var(--slide-interval, 3000ms) linear forwards;
 }
 
 .carousel.paused .dot.active .progressFill{
