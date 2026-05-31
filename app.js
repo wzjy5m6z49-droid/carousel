@@ -1,3 +1,23 @@
+const ARROW_COLOR =
+  config.arrowColor || "#ffffff";
+
+const DOT_COLOR =
+  config.dotColor || "#94a3b8";
+
+const DOT_ACTIVE_COLOR =
+  config.dotActiveColor || "#ffffff";
+
+const GLASS_STRENGTH =
+  Number(config.glassStrength || 16);
+
+const SHADOW_STRENGTH =
+  Number(config.shadowStrength || 28);
+
+const SHOW_DETAIL_BUTTON =
+  config.showDetailButton !== false;
+
+const DOT_POSITION =
+  config.dotPosition || "overlay";
 const config = window.carouselConfig || {};
 
 const slider = document.getElementById("slider");
