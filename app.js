@@ -6,6 +6,10 @@ const nextButton = document.getElementById("next");
 
 const rawItems = window.carouselData || [];
 
+const holidays = (window.holidayData || [])
+  .map(item => item && item.HolidayDate)
+  .filter(Boolean);
+
 let current = 0;
 let timer = null;
 
@@ -13,6 +17,10 @@ const now = new Date();
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
+
+const todayKey = formatDateKey(today);
+
+const isHolidayToday = holidays.indexOf(todayKey) !== -1;
 
 function parseDate(value){
   if(!value){
@@ -23,6 +31,14 @@ function parseDate(value){
   d.setHours(0, 0, 0, 0);
 
   return d;
+}
+
+function formatDateKey(date){
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
 function getTodayKey(){
@@ -82,7 +98,11 @@ function getMonthlyDisplayDate(item){
   target.setHours(0, 0, 0, 0);
 
   if(item.ShiftToFriday === true){
-    while(target.getDay() === 0 || target.getDay() === 6){
+    while(
+      target.getDay() === 0 ||
+      target.getDay() === 6 ||
+      holidays.indexOf(formatDateKey(target)) !== -1
+    ){
       target.setDate(target.getDate() - 1);
     }
   }
@@ -102,6 +122,18 @@ function isAllowedBaseDay(item){
   }
 
   return isSameDate(today, displayDate);
+}
+
+function isAllowedHoliday(item){
+  if(item.HolidayMode === "holiday"){
+    return isHolidayToday;
+  }
+
+  if(item.HolidayMode === "nonHoliday"){
+    return !isHolidayToday;
+  }
+
+  return true;
 }
 
 function isAllowedTime(item){
@@ -163,6 +195,10 @@ const items = rawItems
     }
 
     if(!isAllowedBaseDay(item)){
+      return false;
+    }
+
+    if(!isAllowedHoliday(item)){
       return false;
     }
 
