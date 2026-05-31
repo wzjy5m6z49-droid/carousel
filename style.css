@@ -144,13 +144,13 @@ body{
 }
 
 .dot{
-  width:10px;
-  height:10px;
+  width:12px;
+  height:12px;
   border-radius:999px;
-  background:rgba(255,255,255,.42);
+  background:red;
   cursor:pointer;
   transition:.25s ease;
-}
+  border:2px solid yellow;
 
 .dot:hover{
   transform:scale(1.12);
@@ -158,8 +158,8 @@ body{
 }
 
 .dot.active{
-  width:24px;
-  background:#fff;
+  width:28px;
+  background:lime;
 }
 
 .empty{
