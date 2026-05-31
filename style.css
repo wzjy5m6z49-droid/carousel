@@ -2,14 +2,16 @@ html,
 body{
   margin:0;
   padding:0;
-  background:#111;
+  background:transparent;
   overflow:hidden;
+  font-family:"Segoe UI", sans-serif;
 }
 
 .carousel{
   position:relative;
   width:100%;
   aspect-ratio:16 / 9;
+  min-height:220px;
   overflow:hidden;
   background:#111;
   border-radius:16px;
@@ -17,21 +19,21 @@ body{
 
 .slider{
   display:flex;
+  width:100%;
   height:100%;
-  transition:transform .7s cubic-bezier(.22,1,.36,1);
-  align-items:center;
+  transition:transform .65s cubic-bezier(.22,.8,.2,1);
+  align-items:stretch;
 }
 
 .slide{
-  min-width:80%;
-  margin:0 10%;
+  min-width:100%;
   height:100%;
   position:relative;
   flex-shrink:0;
-  transition:
-    transform .6s ease,
-    opacity .6s ease,
-    filter .6s ease;
+  margin:0;
+  opacity:1;
+  transform:none;
+  filter:none;
 }
 
 .slide img{
@@ -40,22 +42,59 @@ body{
   object-fit:contain;
   display:block;
   background:#111;
-  border-radius:18px;
-  transition:transform .6s ease;
+  border-radius:14px;
+}
+
+.detailButton{
+  position:absolute;
+  bottom:20px;
+  left:20px;
+  z-index:20;
+  background:rgba(255,255,255,.88);
+  color:#222;
+  padding:8px 14px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:600;
+  text-decoration:none;
+  transition:.25s ease;
+}
+
+.detailButton:hover{
+  background:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 6px 14px rgba(0,0,0,.25);
 }
 
 .arrow{
   position:absolute;
   top:50%;
   transform:translateY(-50%);
-  width:64px;
-  height:140px;
+  width:72px;
+  height:180px;
   border:0;
-  background:rgba(0,0,0,.25);
+  background:transparent;
   color:#fff;
-  font-size:44px;
+  font-size:58px;
   cursor:pointer;
-  z-index:10;
+  z-index:50;
+  opacity:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  transition:
+    opacity .35s ease,
+    transform .35s ease;
+}
+
+.carousel:hover .arrow{
+  opacity:.82;
+}
+
+.arrow:hover{
+  opacity:1;
+  transform:translateY(-50%) scale(1.04);
 }
 
 .prev{
@@ -66,6 +105,32 @@ body{
   right:0;
 }
 
+.arrow::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  opacity:.8;
+}
+
+.prev::before{
+  background:linear-gradient(
+    to right,
+    rgba(0,0,0,.55),
+    rgba(0,0,0,.25),
+    rgba(0,0,0,0)
+  );
+}
+
+.next::before{
+  background:linear-gradient(
+    to left,
+    rgba(0,0,0,.55),
+    rgba(0,0,0,.25),
+    rgba(0,0,0,0)
+  );
+}
+
 .dots{
   position:absolute;
   bottom:12px;
@@ -73,17 +138,23 @@ body{
   right:0;
   display:flex;
   justify-content:center;
+  align-items:center;
   gap:8px;
-  z-index:20;
+  z-index:30;
 }
 
 .dot{
   width:10px;
   height:10px;
   border-radius:999px;
-  background:rgba(255,255,255,.45);
+  background:rgba(255,255,255,.42);
   cursor:pointer;
-  transition:.25s;
+  transition:.25s ease;
+}
+
+.dot:hover{
+  transform:scale(1.12);
+  background:rgba(255,255,255,.7);
 }
 
 .dot.active{
@@ -92,7 +163,13 @@ body{
 }
 
 .empty{
+  width:100%;
+  min-width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   color:#fff;
-  padding:20px;
+  font-size:16px;
   font-family:sans-serif;
 }
