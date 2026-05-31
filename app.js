@@ -186,8 +186,12 @@ function render(){
     slider.appendChild(slide);
 
     const dot = document.createElement("span");
-    dot.className = "dot";
-    dot.innerHTML = `<span class="progressFill"></span>`;
+
+dot.className =
+  "dot" + (index === current ? " active" : "");
+
+dot.innerHTML =
+  '<span class="progressFill"></span>';
 
     dot.onclick = () => {
       current = index;
@@ -243,7 +247,18 @@ function prev(){
 
 function restart(){
   if(timer) clearInterval(timer);
+
+  Array.from(dots.children).forEach((dot, index) => {
+    dot.classList.remove("active");
+
+    if(index === current){
+      void dot.offsetWidth;
+      dot.classList.add("active");
+    }
+  });
+
   if(items.length <= 1) return;
+
   timer = setInterval(next, SLIDE_INTERVAL);
 }
 
