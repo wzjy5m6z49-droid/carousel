@@ -5,40 +5,48 @@ const prevButton = document.getElementById("prev");
 const nextButton = document.getElementById("next");
 
 const rawItems = window.carouselData || [];
+const holidays = (window.holidayData || []).map(x => x.HolidayDate).filter(Boolean);
 
-const holidays = (window.holidayData || [])
-  .map(item => item && item.HolidayDate)
-  .filter(Boolean);
+const SLIDE_INTERVAL = 3000;
+const CAROUSEL_LAYOUT = "normal"; // "normal" or "peek"
 
 let current = 0;
 let timer = null;
+
+carousel.classList.add(CAROUSEL_LAYOUT === "peek" ? "layoutPeek" : "layoutNormal");
+
+prevButton.innerHTML = `
+<svg class="arrowSvg" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M15 4 L7 12 L15 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`;
+
+nextButton.innerHTML = `
+<svg class="arrowSvg" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M9 4 L17 12 L9 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`;
 
 const now = new Date();
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
-const todayKey = formatDateKey(today);
-
-const isHolidayToday = holidays.indexOf(todayKey) !== -1;
-
-function parseDate(value){
-  if(!value){
-    return null;
-  }
-
-  const d = new Date(value);
-  d.setHours(0, 0, 0, 0);
-
-  return d;
+function formatDateKey(date){
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
-function formatDateKey(date){
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+const todayKey = formatDateKey(today);
+const isHolidayToday = holidays.includes(todayKey);
 
-  return `${year}-${month}-${day}`;
+function parseDate(value){
+  if(!value) return null;
+  const d = new Date(value);
+  d.setHours(0, 0, 0, 0);
+  return d;
 }
 
 function getTodayKey(){
@@ -46,62 +54,35 @@ function getTodayKey(){
 }
 
 function getDisplayDays(item){
-  if(!item.DisplayDays){
-    return [];
-  }
-
-  if(!Array.isArray(item.DisplayDays)){
-    return [];
-  }
-
-  return item.DisplayDays
-    .map(day => day && day.Value)
-    .filter(Boolean);
+  if(!Array.isArray(item.DisplayDays)) return [];
+  return item.DisplayDays.map(day => day && day.Value).filter(Boolean);
 }
 
 function normalizeTime(value){
-  if(!value){
-    return "";
-  }
-
+  if(!value) return "";
   const parts = String(value).split(":");
-
-  if(parts.length < 2){
-    return "";
-  }
-
-  const hour = String(parts[0]).padStart(2, "0");
-  const minute = String(parts[1]).padStart(2, "0");
-
-  return `${hour}:${minute}`;
+  if(parts.length < 2) return "";
+  return `${String(parts[0]).padStart(2, "0")}:${String(parts[1]).padStart(2, "0")}`;
 }
 
 function isSameDate(a, b){
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
+  return a.getFullYear() === b.getFullYear()
+    && a.getMonth() === b.getMonth()
+    && a.getDate() === b.getDate();
 }
 
 function getMonthlyDisplayDate(item){
   const baseDay = Number(item.BaseDay || 0);
+  if(!baseDay) return null;
 
-  if(!baseDay){
-    return null;
-  }
-
-  const year = now.getFullYear();
-  const month = now.getMonth();
-
-  const target = new Date(year, month, baseDay);
+  const target = new Date(now.getFullYear(), now.getMonth(), baseDay);
   target.setHours(0, 0, 0, 0);
 
   if(item.ShiftToFriday === true){
     while(
       target.getDay() === 0 ||
       target.getDay() === 6 ||
-      holidays.indexOf(formatDateKey(target)) !== -1
+      holidays.includes(formatDateKey(target))
     ){
       target.setDate(target.getDate() - 1);
     }
@@ -111,28 +92,15 @@ function getMonthlyDisplayDate(item){
 }
 
 function isAllowedBaseDay(item){
-  if(!item.BaseDay){
-    return true;
-  }
-
+  if(!item.BaseDay) return true;
   const displayDate = getMonthlyDisplayDate(item);
-
-  if(!displayDate){
-    return true;
-  }
-
+  if(!displayDate) return true;
   return isSameDate(today, displayDate);
 }
 
 function isAllowedHoliday(item){
-  if(item.HolidayMode === "holiday"){
-    return isHolidayToday;
-  }
-
-  if(item.HolidayMode === "nonHoliday"){
-    return !isHolidayToday;
-  }
-
+  if(item.HolidayMode === "holiday") return isHolidayToday;
+  if(item.HolidayMode === "nonHoliday") return !isHolidayToday;
   return true;
 }
 
@@ -140,105 +108,57 @@ function isAllowedTime(item){
   const start = normalizeTime(item.ShowStartTime);
   const end = normalizeTime(item.ShowEndTime);
 
-  if(!start && !end){
-    return true;
-  }
+  if(!start && !end) return true;
 
-  const hh = String(now.getHours()).padStart(2, "0");
-  const mm = String(now.getMinutes()).padStart(2, "0");
-  const currentTime = `${hh}:${mm}`;
+  const currentTime =
+    `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
-  if(start && currentTime < start){
-    return false;
-  }
-
-  if(end && currentTime > end){
-    return false;
-  }
+  if(start && currentTime < start) return false;
+  if(end && currentTime > end) return false;
 
   return true;
 }
 
 function isAllowedDay(item){
   const days = getDisplayDays(item);
-
-  if(!days.length){
-    return true;
-  }
-
-  return days.indexOf(getTodayKey()) !== -1;
+  if(!days.length) return true;
+  return days.includes(getTodayKey());
 }
 
 function isAllowedDate(item){
   const start = parseDate(item.StartDate);
   const end = parseDate(item.EndDate);
 
-  if(start && today < start){
-    return false;
-  }
-
-  if(end && today > end){
-    return false;
-  }
+  if(start && today < start) return false;
+  if(end && today > end) return false;
 
   return true;
 }
 
 const items = rawItems
   .filter(item => {
-    if(!item || !item.Image){
-      return false;
-    }
-
-    if(!isAllowedDate(item)){
-      return false;
-    }
-
-    if(!isAllowedBaseDay(item)){
-      return false;
-    }
-
-    if(!isAllowedHoliday(item)){
-      return false;
-    }
-
-    if(!isAllowedDay(item)){
-      return false;
-    }
-
-    if(!isAllowedTime(item)){
-      return false;
-    }
-
+    if(!item || !item.Image) return false;
+    if(!isAllowedDate(item)) return false;
+    if(!isAllowedBaseDay(item)) return false;
+    if(!isAllowedHoliday(item)) return false;
+    if(!isAllowedDay(item)) return false;
+    if(!isAllowedTime(item)) return false;
     return true;
   })
   .sort((a, b) => {
     const aTime = !!(a.ShowStartTime || a.ShowEndTime);
     const bTime = !!(b.ShowStartTime || b.ShowEndTime);
 
-    if(aTime && !bTime){
-      return -1;
-    }
-
-    if(!aTime && bTime){
-      return 1;
-    }
+    if(aTime && !bTime) return -1;
+    if(!aTime && bTime) return 1;
 
     const aBase = !!a.BaseDay;
     const bBase = !!b.BaseDay;
 
-    if(aBase && !bBase){
-      return -1;
-    }
+    if(aBase && !bBase) return -1;
+    if(!aBase && bBase) return 1;
 
-    if(!aBase && bBase){
-      return 1;
-    }
-
-    const orderA = Number(a.DisplayOrder || 9999);
-    const orderB = Number(b.DisplayOrder || 9999);
-
-    return orderA - orderB;
+    return Number(a.DisplayOrder || 9999) - Number(b.DisplayOrder || 9999);
   });
 
 function render(){
@@ -266,7 +186,8 @@ function render(){
     slider.appendChild(slide);
 
     const dot = document.createElement("span");
-    dot.className = "dot" + (index === current ? " active" : "");
+    dot.className = "dot";
+    dot.innerHTML = `<span class="progressFill"></span>`;
 
     dot.onclick = () => {
       current = index;
@@ -282,41 +203,48 @@ function render(){
 }
 
 function update(){
-  slider.style.transform = `translateX(-${current * 100}%)`;
+  if(CAROUSEL_LAYOUT === "peek"){
+    slider.style.transform = `translateX(calc(10% - ${current * 100}%))`;
+  }else{
+    slider.style.transform = `translateX(-${current * 100}%)`;
+  }
 
   Array.from(dots.children).forEach((dot, index) => {
-    dot.classList.toggle("active", index === current);
+    dot.classList.remove("active");
+
+    if(index === current){
+      void dot.offsetWidth;
+      dot.classList.add("active");
+    }
+  });
+
+  Array.from(slider.children).forEach((slide, index) => {
+    if(CAROUSEL_LAYOUT !== "peek") return;
+
+    if(index === current){
+      slide.classList.add("activeSlide");
+    }else{
+      slide.classList.remove("activeSlide");
+    }
   });
 }
 
 function next(){
-  if(!items.length){
-    return;
-  }
-
+  if(!items.length) return;
   current = (current + 1) % items.length;
   update();
 }
 
 function prev(){
-  if(!items.length){
-    return;
-  }
-
+  if(!items.length) return;
   current = current === 0 ? items.length - 1 : current - 1;
   update();
 }
 
 function restart(){
-  if(timer){
-    clearInterval(timer);
-  }
-
-  if(items.length <= 1){
-    return;
-  }
-
-  timer = setInterval(next, 3000);
+  if(timer) clearInterval(timer);
+  if(items.length <= 1) return;
+  timer = setInterval(next, SLIDE_INTERVAL);
 }
 
 nextButton.onclick = () => {
@@ -330,12 +258,12 @@ prevButton.onclick = () => {
 };
 
 carousel.addEventListener("mouseenter", () => {
-  if(timer){
-    clearInterval(timer);
-  }
+  carousel.classList.add("paused");
+  if(timer) clearInterval(timer);
 });
 
 carousel.addEventListener("mouseleave", () => {
+  carousel.classList.remove("paused");
   restart();
 });
 
