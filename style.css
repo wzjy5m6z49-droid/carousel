@@ -291,15 +291,3 @@ body{
   justify-content:center;
   margin-top:16px;
 }
-
-.carousel.arrowsOutside{
-  overflow:visible;
-}
-
-.carousel.arrowsOutside .prev{
-  left:-56px;
-}
-
-.carousel.arrowsOutside .next{
-  right:-56px;
-}
