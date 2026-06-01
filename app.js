@@ -27,8 +27,14 @@ const BUTTON_BACKGROUND_COLOR =
 const BUTTON_TEXT_COLOR =
   config.buttonTextColor || "#333333";
 
-const ARROW_POSITION =
-  config.arrowPosition || "inside";
+const shell =
+  document.querySelector(".carouselShell");
+
+if(ARROW_POSITION === "outside"){
+  shell.classList.add("outside");
+}else{
+  shell.classList.add("inside");
+}
 
 const slider = document.getElementById("slider");
 const dots = document.getElementById("dots");
