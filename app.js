@@ -33,14 +33,19 @@ const ARROW_POSITION =
 const shell =
   document.querySelector(".carouselShell");
 
-if(ARROW_POSITION === "outside"){
-  shell.classList.add("outside");
+if(ARROW_POSITION === "inside"){
+  carousel.appendChild(prevButton);
+  carousel.appendChild(nextButton);
+  carousel.classList.add("arrowsInside");
 }else{
-  shell.classList.add("inside");
-}  
+  shell.insertBefore(prevButton, carousel);
+  shell.appendChild(nextButton);
+  carousel.classList.remove("arrowsInside");
+} 
 
 const slider = document.getElementById("slider");
 const dots = document.getElementById("dots");
+const dotsWrap = document.getElementById("dotsWrap");
 const carousel = document.getElementById("carousel");
 const prevButton = document.getElementById("prev");
 const nextButton = document.getElementById("next");
@@ -144,8 +149,12 @@ if(!SHOW_DOTS){
   dots.style.display = "none";
 }
 
-if(DOT_POSITION === "below"){
-  carousel.classList.add("dotsBelow");
+if(DOT_POSITION === "overlay"){
+  carousel.appendChild(dots);
+  carousel.classList.add("dotsOverlay");
+}else{
+  dotsWrap.appendChild(dots);
+  carousel.classList.remove("dotsOverlay");
 }
 
 if(ARROW_POSITION === "outside"){
