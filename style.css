@@ -294,3 +294,30 @@ body{
   font-size:16px;
   font-family:sans-serif;
 }
+
+.carousel.dotsOverlay .dots{
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:999;
+}
+
+.dotsWrap .dots{
+  position:static;
+  transform:none;
+}
+
+.carousel.arrowsInside .arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+}
+
+.carousel.arrowsInside .prev{
+  left:0;
+}
+
+.carousel.arrowsInside .next{
+  right:0;
+}
