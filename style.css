@@ -33,15 +33,15 @@ body{
 }
 
 .carouselShell.inside .prev{
-  margin-right:-20px;
+  margin-right:-72px;
 }
 
 .carouselShell.inside .next{
-  margin-left:-20px;
+  margin-left:-72px;
 }
 
 .carouselShell.outside{
-  gap:12px;
+  gap:0;
 }
 
 .carouselShell.outside .prev{
