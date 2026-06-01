@@ -39,6 +39,12 @@ const carousel = document.getElementById("carousel");
 const prevButton = document.getElementById("prev");
 const nextButton = document.getElementById("next");
 
+if(ARROW_POSITION === "outside"){
+  shell.classList.add("outside");
+}else{
+  shell.classList.add("inside");
+}
+
 if(ARROW_POSITION === "inside"){
   carousel.appendChild(prevButton);
   carousel.appendChild(nextButton);
