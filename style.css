@@ -55,7 +55,7 @@ body{
 .carousel{
   position:relative;
   width:min(100%, 980px);
-  margin:0 auto;
+  margin:0;
   aspect-ratio:16 / 9;
   min-height:220px;
   overflow:hidden;
