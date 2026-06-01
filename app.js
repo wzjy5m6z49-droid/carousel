@@ -30,8 +30,14 @@ const BUTTON_TEXT_COLOR =
 const ARROW_POSITION =
   config.arrowPosition || "inside";
 
-const shell =
-  document.querySelector(".carouselShell");
+const shell = document.querySelector(".carouselShell");
+
+const slider = document.getElementById("slider");
+const dots = document.getElementById("dots");
+const dotsWrap = document.getElementById("dotsWrap");
+const carousel = document.getElementById("carousel");
+const prevButton = document.getElementById("prev");
+const nextButton = document.getElementById("next");
 
 if(ARROW_POSITION === "inside"){
   carousel.appendChild(prevButton);
@@ -41,14 +47,7 @@ if(ARROW_POSITION === "inside"){
   shell.insertBefore(prevButton, carousel);
   shell.appendChild(nextButton);
   carousel.classList.remove("arrowsInside");
-} 
-
-const slider = document.getElementById("slider");
-const dots = document.getElementById("dots");
-const dotsWrap = document.getElementById("dotsWrap");
-const carousel = document.getElementById("carousel");
-const prevButton = document.getElementById("prev");
-const nextButton = document.getElementById("next");
+}
 
 const rawItems = window.carouselData || [];
 const holidays = (window.holidayData || [])
