@@ -26,7 +26,30 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:0px;
+}
+
+.carouselShell.inside{
+  gap:0;
+}
+
+.carouselShell.inside .prev{
+  margin-right:-20px;
+}
+
+.carouselShell.inside .next{
+  margin-left:-20px;
+}
+
+.carouselShell.outside{
+  gap:12px;
+}
+
+.carouselShell.outside .prev{
+  margin-right:0;
+}
+
+.carouselShell.outside .next{
+  margin-left:0;
 }
 
 .carousel{
