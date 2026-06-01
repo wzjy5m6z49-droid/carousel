@@ -49,6 +49,14 @@ if(ARROW_POSITION === "inside"){
   carousel.classList.remove("arrowsInside");
 }
 
+if(DOT_POSITION === "overlay"){
+  carousel.appendChild(dots);
+  carousel.classList.add("dotsOverlay");
+}else{
+  dotsWrap.appendChild(dots);
+  carousel.classList.remove("dotsOverlay");
+}
+
 const rawItems = window.carouselData || [];
 const holidays = (window.holidayData || [])
   .map(x => x.HolidayDate)
@@ -146,18 +154,6 @@ if(!SHOW_ARROWS){
 
 if(!SHOW_DOTS){
   dots.style.display = "none";
-}
-
-if(DOT_POSITION === "overlay"){
-  carousel.appendChild(dots);
-  carousel.classList.add("dotsOverlay");
-}else{
-  dotsWrap.appendChild(dots);
-  carousel.classList.remove("dotsOverlay");
-}
-
-if(ARROW_POSITION === "outside"){
-  carousel.classList.add("arrowsOutside");
 }
 
 prevButton.style.color = ARROW_COLOR;
