@@ -443,11 +443,23 @@ const items = rawItems
       return 1;
     }
 
-    return (
-      Number(a.DisplayOrder || 9999) -
-      Number(b.DisplayOrder || 9999)
-    );
-  });
+    const priorityMap = {
+  "最優先": 1,
+  "通常": 2
+};
+
+const priorityDiff =
+  (priorityMap[a.Priority] || 99) -
+  (priorityMap[b.Priority] || 99);
+
+if(priorityDiff !== 0){
+  return priorityDiff;
+}
+
+return (
+  new Date(b.Modified || 0) -
+  new Date(a.Modified || 0)
+);
 
 
 function render(){
