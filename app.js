@@ -460,6 +460,7 @@ return (
   new Date(b.Modified || 0) -
   new Date(a.Modified || 0)
 );
+});
 
 
 function render(){
