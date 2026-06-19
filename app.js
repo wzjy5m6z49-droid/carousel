@@ -463,97 +463,66 @@ return (
 });
 
 
-function render(){
-  if(!items.length){
-    slider.innerHTML =
-      '<div class="empty">表示対象の画像がありません</div>';
+items.forEach((item, index) => {
 
-    return;
-  }
+  const slide =
+    document.createElement("div");
 
-  slider.innerHTML = "";
-  dots.innerHTML = "";
-
-  items.forEach((item, index) => {
-    const slide =
-      document.createElement("div");
-
-    slide.className = "slide";
-
-    if(item.Link && !SHOW_DETAIL_BUTTON){
-
-  slide.innerHTML = `
-    <a
-      href="${item.Link}"
-      target="_top"
-      class="slideLink"
-    >
-      <img
-        src="${item.Image}"
-        alt=""
-        style="object-fit:${IMAGE_FIT};"
-      >
-    </a>
-  `;
-}
-else{
+  slide.className = "slide";
 
   if(item.Link && !SHOW_DETAIL_BUTTON){
 
-  slide.innerHTML = `
-    <a
-      href="${item.Link}"
-      target="_top"
-      class="slideLink"
-    >
+    slide.innerHTML = `
+      <a
+        href="${item.Link}"
+        target="_top"
+        class="slideLink"
+      >
+        <img
+          src="${item.Image}"
+          alt=""
+          style="object-fit:${IMAGE_FIT};"
+        >
+      </a>
+    `;
+  }
+  else{
+
+    slide.innerHTML = `
       <img
         src="${item.Image}"
         alt=""
         style="object-fit:${IMAGE_FIT};"
       >
-    </a>
-  `;
-}
-else{
 
-  slide.innerHTML = `
-    <img
-      src="${item.Image}"
-      alt=""
-      style="object-fit:${IMAGE_FIT};"
-    >
+      ${
+        item.Link && SHOW_DETAIL_BUTTON
+          ? `<a class="detailButton" href="${item.Link}" target="_top">${DETAIL_BUTTON_TEXT}</a>`
+          : ""
+      }
+    `;
+  }
 
-    ${
-      item.Link && SHOW_DETAIL_BUTTON
-        ? `<a class="detailButton" href="${item.Link}" target="_top">${DETAIL_BUTTON_TEXT}</a>`
-        : ""
-    }
-  `;
-}
+  slider.appendChild(slide);
 
-    slider.appendChild(slide);
+  const dot =
+    document.createElement("span");
 
-    const dot =
-      document.createElement("span");
+  dot.className =
+    "dot" + (index === current ? " active" : "");
 
-    dot.className =
-      "dot" + (index === current ? " active" : "");
+  dot.innerHTML =
+    '<span class="progressFill"></span>';
 
-    dot.innerHTML =
-      '<span class="progressFill"></span>';
+  dot.onclick = () => {
+    current = index;
+    update();
+    restart();
+  };
 
-    dot.onclick = () => {
-      current = index;
-      update();
-      restart();
-    };
+  dots.appendChild(dot);
 
-    dots.appendChild(dot);
-  });
-
-  update();
-  restart();
-}
+});
 
 
 function update(){
