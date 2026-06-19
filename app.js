@@ -480,19 +480,56 @@ function render(){
 
     slide.className = "slide";
 
-    slide.innerHTML = `
+    if(item.Link && !SHOW_DETAIL_BUTTON){
+
+  slide.innerHTML = `
+    <a
+      href="${item.Link}"
+      target="_top"
+      class="slideLink"
+    >
       <img
         src="${item.Image}"
         alt=""
         style="object-fit:${IMAGE_FIT};"
       >
-
-     ${
-  item.Link && SHOW_DETAIL_BUTTON
-    ? `<a class="detailButton" href="${item.Link}" target="_top">${DETAIL_BUTTON_TEXT}</a>`
-    : ""
+    </a>
+  `;
 }
-    `;
+else{
+
+  if(item.Link && !SHOW_DETAIL_BUTTON){
+
+  slide.innerHTML = `
+    <a
+      href="${item.Link}"
+      target="_top"
+      class="slideLink"
+    >
+      <img
+        src="${item.Image}"
+        alt=""
+        style="object-fit:${IMAGE_FIT};"
+      >
+    </a>
+  `;
+}
+else{
+
+  slide.innerHTML = `
+    <img
+      src="${item.Image}"
+      alt=""
+      style="object-fit:${IMAGE_FIT};"
+    >
+
+    ${
+      item.Link && SHOW_DETAIL_BUTTON
+        ? `<a class="detailButton" href="${item.Link}" target="_top">${DETAIL_BUTTON_TEXT}</a>`
+        : ""
+    }
+  `;
+}
 
     slider.appendChild(slide);
 
