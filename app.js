@@ -474,10 +474,6 @@ function render(){
   slider.innerHTML = "";
   dots.innerHTML = "";
 
-  const indicator = document.createElement("span");
-  indicator.className = "activeDotIndicator";
-  dots.appendChild(indicator);
-
   items.forEach((item, index) => {
     const slide =
       document.createElement("div");
@@ -528,12 +524,6 @@ function render(){
 }
 
 function update(){
-const indicator = dots.querySelector(".activeDotIndicator");
-
-if(indicator){
-  indicator.style.transform =
-    `translateX(${current * 18}px)`;
-}
   if(CAROUSEL_LAYOUT === "peek"){
     slider.style.transform =
       `translateX(calc(10% - ${current * 100}%))`;
@@ -649,17 +639,3 @@ carousel.addEventListener("mouseenter", () => {
     clearInterval(timer);
   }
 });
-
-
-carousel.addEventListener("mouseleave", () => {
-  if(!PAUSE_ON_HOVER){
-    return;
-  }
-
-  carousel.classList.remove("paused");
-
-  restart();
-});
-
-
-render();
