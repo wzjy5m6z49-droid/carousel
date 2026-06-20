@@ -639,3 +639,15 @@ carousel.addEventListener("mouseenter", () => {
     clearInterval(timer);
   }
 });
+
+carousel.addEventListener("mouseleave", () => {
+  if(!PAUSE_ON_HOVER){
+    return;
+  }
+
+  carousel.classList.remove("paused");
+
+  restart();
+});
+
+render();
