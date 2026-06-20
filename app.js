@@ -463,69 +463,77 @@ return (
 });
 
 
-items.forEach((item, index) => {
+function render(){
+  if(!items.length){
+    slider.innerHTML =
+      '<div class="empty">表示対象の画像がありません</div>';
 
-  const slide =
-    document.createElement("div");
-
-  slide.className = "slide";
-
-  if(item.Link && !SHOW_DETAIL_BUTTON){
-
-    slide.innerHTML = `
-      <a
-        href="${item.Link}"
-        target="_top"
-        class="slideLink"
-      >
-        <img
-          src="${item.Image}"
-          alt=""
-          style="object-fit:${IMAGE_FIT};"
-        >
-      </a>
-    `;
-  }
-  else{
-
-    slide.innerHTML = `
-      <img
-        src="${item.Image}"
-        alt=""
-        style="object-fit:${IMAGE_FIT};"
-      >
-
-      ${
-        item.Link && SHOW_DETAIL_BUTTON
-          ? `<a class="detailButton" href="${item.Link}" target="_top">${DETAIL_BUTTON_TEXT}</a>`
-          : ""
-      }
-    `;
+    return;
   }
 
-  slider.appendChild(slide);
+  slider.innerHTML = "";
+  dots.innerHTML = "";
 
-  const dot =
-    document.createElement("span");
+  const indicator = document.createElement("span");
+  indicator.className = "activeDotIndicator";
+  dots.appendChild(indicator);
 
-  dot.className =
-    "dot" + (index === current ? " active" : "");
+  items.forEach((item, index) => {
+    const slide =
+      document.createElement("div");
 
-  dot.innerHTML =
-    '<span class="progressFill"></span>';
+    slide.className = "slide";
 
-  dot.onclick = () => {
-    current = index;
-    update();
-    restart();
-  };
+    if(item.Link && !SHOW_DETAIL_BUTTON){
+      slide.innerHTML = `
+        <a href="${item.Link}" target="_top" class="slideLink">
+          <img src="${item.Image}" alt="" style="object-fit:${IMAGE_FIT};">
+        </a>
+      `;
+    }
+    else{
+      slide.innerHTML = `
+        <img src="${item.Image}" alt="" style="object-fit:${IMAGE_FIT};">
 
-  dots.appendChild(dot);
+        ${
+          item.Link && SHOW_DETAIL_BUTTON
+            ? `<a class="detailButton" href="${item.Link}" target="_top">${DETAIL_BUTTON_TEXT}</a>`
+            : ""
+        }
+      `;
+    }
 
-});
+    slider.appendChild(slide);
 
+    const dot =
+      document.createElement("span");
+
+    dot.className =
+      "dot" + (index === current ? " active" : "");
+
+    dot.innerHTML =
+      '<span class="progressFill"></span>';
+
+    dot.onclick = () => {
+      current = index;
+      update();
+      restart();
+    };
+
+    dots.appendChild(dot);
+  });
+
+  update();
+  restart();
+}
 
 function update(){
+const indicator = dots.querySelector(".activeDotIndicator");
+
+if(indicator){
+  indicator.style.transform =
+    `translateX(${current * 18}px)`;
+}
   if(CAROUSEL_LAYOUT === "peek"){
     slider.style.transform =
       `translateX(calc(10% - ${current * 100}%))`;
