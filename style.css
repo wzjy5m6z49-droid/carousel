@@ -695,26 +695,3 @@ body{
   height:100%;
   display:block;
 }
-
-.dot{
-  transform-origin:center;
-}
-
-.dot.active{
-  width:34px;
-  animation:dotMorph .45s cubic-bezier(.22,.8,.2,1);
-}
-
-@keyframes dotMorph{
-  0%{
-    transform:scaleX(.7) scaleY(1.15);
-  }
-
-  55%{
-    transform:scaleX(1.35) scaleY(.85);
-  }
-
-  100%{
-    transform:scaleX(1) scaleY(1);
-  }
-}
